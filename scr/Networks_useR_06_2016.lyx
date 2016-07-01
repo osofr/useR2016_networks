@@ -1,0 +1,2534 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass beamer
+\begin_preamble
+%\usetheme[width=0pt]{PaloAlto}
+\usetheme{Boadilla}
+
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+\end_preamble
+\use_default_options true
+\begin_modules
+knitr
+beamer-fragile
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding default
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<setup, include=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(knitr)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(simcausal)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(tmlenet)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+options(simcausal.verbose = FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+options(tmlenet.verbose = FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=60)  # make the printing fit on the page
+\end_layout
+
+\begin_layout Plain Layout
+
+set.seed(1121)   # make the results repeatable
+\end_layout
+
+\begin_layout Plain Layout
+
+opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='f
+ootnotesize')
+\end_layout
+
+\begin_layout Plain Layout
+
+knit_hooks$set(pdfcrop = hook_pdfcrop)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Title
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+Networks
+\end_layout
+
+\end_inset
+
+ Causal inference in social network data
+\end_layout
+
+\begin_layout Author
+Oleg Sofrygin, Mark J.
+ van der Laan
+\end_layout
+
+\begin_layout Institute
+(UC Berkeley)
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Outline
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Warn this talk contains a fair share of statistical notation.
+\end_layout
+
+\begin_layout Plain Layout
+I've tried to simplify it as much as possible, taking out 90% of notation.
+ But some of it cannot be avoided.
+ You've been warned.
+\end_layout
+
+\begin_layout Plain Layout
+A side note: 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+I.
+
+\series default
+ Background
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+II
+\series default
+.
+ Network-dependent data as high-dimensional data problem
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+III
+\series default
+.
+ Simulations & Estimation in 
+\begin_inset Formula $\mathbf{R}$
+\end_inset
+
+ (
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+/
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+IV.
+
+\series default
+ Simulation study
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Section
+Background
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Background
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+This talk is not about statistical modeling of network formation
+\end_layout
+
+\begin_layout Itemize
+Data has been gathered on individual people that are known to be connected
+ by a social network
+\end_layout
+
+\begin_layout Itemize
+The field has been gaining interest:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+New ways of gathering data (online social networks, mobile fitness censors)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Want to known estimate an effect of some intervention among these people
+\end_layout
+
+\begin_layout Itemize
+We hypothesize that network plays a role in the way the personal-level data
+ was generated 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The intervention might propagate amongst people
+\end_layout
+
+\begin_layout Itemize
+May induce dependence among units
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+infectious diseases (flu) and aspirin are two extreme example of this, but
+ in between we have these bordeline cases, such as ....
+ next slide..
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Background
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Christakis and Fowler (2007, 2008, 2009, 2010, 2011, 2012) initiated a wave
+ of interest
+\end_layout
+
+\begin_layout Itemize
+Widely publicized results with significant peer effects for 
+\series bold
+obesity
+\series default
+, 
+\series bold
+smoking
+\series default
+, 
+\series bold
+alcohol consumption
+\series default
+, 
+\series bold
+sleep habits
+\series default
+, etc.
+\end_layout
+
+\begin_layout Itemize
+Criticized for ignoring the dependent nature of the data and for making
+ unrealistic modeling assumptions
+\end_layout
+
+\begin_layout Itemize
+Two problems for traditional (independent data) inference:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+CLT may not hold
+\end_layout
+
+\begin_layout Itemize
+Not taking into account for dependence may result in S.E.s that are too small
+ (anti-conservative)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Main Goals
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Framework for estimation and inference in such data
+\end_layout
+
+\begin_layout Itemize
+Software for simulation of synthetic population data under network dependence
+ (
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Software for estimation of effects in network-dependent data (
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Correct inference (a good estimate of the variance of our estimate)
+\end_layout
+
+\begin_layout Itemize
+Side note: the issues discussed here are applicable to non-network (independent)
+ high dimensional data
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Section
+Network-dependent data as high-dimensional data problem
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Classical causal framework with IID setting
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Suppose we have 
+\begin_inset Formula $N$
+\end_inset
+
+ individuals (units) enrolled in a study
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $O_{i}=(W_{i},A_{i},Y_{i})$
+\end_inset
+
+ denotes the data collected on each unit, for 
+\begin_inset Formula $i=1,\ldots,N$
+\end_inset
+
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $W_{i}$
+\end_inset
+
+ - are the baseline covariates
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ - exposure (
+\begin_inset Formula $0/1)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+ - outcome
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Want to estimate the ATE:
+\begin_inset Formula 
+\[
+E_{W}\left[E(Y_{i}|A_{i}=1,W_{i})-E(Y_{i}|A_{i}=0,W_{i})\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+This parameter is a function of the true distribution of the data, 
+\begin_inset Formula $P_{0}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+It has causal interpretation under additional assumptions
+\end_layout
+
+\begin_layout Itemize
+It is 
+\series bold
+interpretable
+\series default
+ even when we don't believe in these assumptions!
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+there has been a lot of talk about interpretable models vs.
+ ML - this one is interpretable and we can use ML
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+We can use state-of-the-art machine learning without ever loosing this interpret
+ability
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Two independent units with DAGs
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Consider a typical causal DAG for two i.i.d.
+ observations (
+\series bold
+1 
+\series default
+&
+\series bold
+ 2
+\series default
+) with treatment 
+\begin_inset Formula $A$
+\end_inset
+
+, baseline covariates 
+\begin_inset Formula $W$
+\end_inset
+
+ and outcome 
+\begin_inset Formula $Y$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename figure/DAG_nospill-crop.pdf
+	lyxscale 90
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Now these two units are also 
+\begin_inset Quotes eld
+\end_inset
+
+connected
+\begin_inset Quotes erd
+\end_inset
+
+ by a network (set of friends 
+\begin_inset Formula $F_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{2}$
+\end_inset
+
+ that was also measured)
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+What we mean by a 
+\begin_inset Quotes eld
+\end_inset
+
+network
+\begin_inset Quotes erd
+\end_inset
+
+?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Suppose unit 1 lists unit 2 is her 
+\begin_inset Quotes eld
+\end_inset
+
+friend
+\begin_inset Quotes erd
+\end_inset
+
+ (but not vice versa),
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Allow 
+\series bold
+spillover
+\series default
+: 
+\begin_inset Formula $Y_{1}$
+\end_inset
+
+ depends on the treatment assignment of unit 2, 
+\begin_inset Formula $A_{2}$
+\end_inset
+
+.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+2 extremes: 1) Will me joining a gym affect my friends obesity status in
+ the future? 
+\end_layout
+
+\begin_layout Plain Layout
+2) If I get vaccinated, will my roommate become less likely to be infected?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename figure/DAG_spill1-crop.pdf
+	lyxscale 90
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+What we mean by a 
+\begin_inset Quotes eld
+\end_inset
+
+network
+\begin_inset Quotes erd
+\end_inset
+
+?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $Y_{1}$
+\end_inset
+
+ depends on 
+\begin_inset Formula $W_{2}$
+\end_inset
+
+ (baseline covariates of unit 1); and
+\end_layout
+
+\begin_layout Itemize
+May allow 
+\begin_inset Formula $W_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $W_{2}$
+\end_inset
+
+ to be dependent (correlated) if units 1 and 2 are friends
+\end_layout
+
+\begin_layout Itemize
+We may also assume 
+\begin_inset Formula $A_{1}$
+\end_inset
+
+ depends on 
+\begin_inset Formula $W_{2}$
+\end_inset
+
+ (in addition to 
+\begin_inset Formula $W_{1}$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename figure/DAG_spill3-crop.png
+	lyxscale 30
+	scale 33
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Analogue to ATE in a network setting
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+The ATE in IID data: 
+\begin_inset Formula 
+\[
+E_{W}\left[E(Y_{i}|A_{i}=1,W_{i})-E(Y_{i}|A_{i}=0,W_{i})\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Network:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Want to know the effect of setting 
+\begin_inset Formula $A_{j}$
+\end_inset
+
+ for 
+\begin_inset Formula $j\in F_{i}$
+\end_inset
+
+ on 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+All 
+\begin_inset Formula $W_{j}$
+\end_inset
+
+, for 
+\begin_inset Formula $j\in F_{i}$
+\end_inset
+
+ are all confounders - need to adjust for them
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The ATE analogue in 
+\begin_inset Quotes eld
+\end_inset
+
+networked
+\begin_inset Quotes erd
+\end_inset
+
+ data: 
+\begin_inset Formula 
+\begin{eqnarray*}
+ &  & \dfrac{1}{N}\sum_{i}E(Y_{i}|A_{i}=1,\mathbf{A}_{F_{i}}=\mathbf{1}^{|F_{i}|},W_{i},W_{j}:j\in F_{i})\\
+ & - & \dfrac{1}{N}\sum_{i}E(Y_{i}|A_{i}=0,\mathbf{A}_{F_{i}}=\mathbf{0}^{|F_{i}|},W_{i},W_{j}:j\in F_{i})
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Network curse of dimensionality
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Suppose that 
+\begin_inset Formula $i$
+\end_inset
+
+ has 100 friends (
+\begin_inset Formula $|F_{i}|=100$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+Have to adjust for 
+\begin_inset Formula $W_{i}$
+\end_inset
+
+ plus additional 100 
+\begin_inset Formula $(W_{j}:j\in F_{i})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Have to fit a model for the effect of 
+\begin_inset Formula $A_{i}$
+\end_inset
+
+ on 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+ plus the effect of 100 additional exposures 
+\begin_inset Formula $(A_{j}:j\in F_{i}$
+\end_inset
+
+) on 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+To have any hope of fitting the outcome model we have to assume some common
+ model for 
+\begin_inset Formula $N$
+\end_inset
+
+ observations
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+But 
+\begin_inset Formula $i$
+\end_inset
+
+ and 
+\begin_inset Formula $j$
+\end_inset
+
+ can have different number of friends! How can we even have a common model?
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Ways around it:
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+For a long time this is where it usually ended and people analyzed such
+ data in this framework by making very restrictive assumptions:
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Assume same number of friends for everybody
+\end_layout
+
+\begin_layout Itemize
+Assume very small number of friends (a most 2) - only household members
+\end_layout
+
+\begin_layout Itemize
+Clearly this is not a good representation of real data
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Network curse of dimensionality: network summaries
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+One possible approach to dealing with this curse of dimensionality - create
+ summaries of the data! 
+\end_layout
+
+\begin_layout Plain Layout
+This has been known to machine learning commmunity for years! 
+\end_layout
+
+\begin_layout Plain Layout
+Network summaries can be thought of as an analogues with feature selection
+ in high dimensional data problems.
+\end_layout
+
+\begin_layout Plain Layout
+For examle, I might think that my obesity status will obvi depend on my
+ gym membership but mayby it really is just the average number of my friends
+ who go to the gym and not the status of every single one of my friends
+ gym memberships.
+\end_layout
+
+\begin_layout Plain Layout
+This term has also been previously called 
+\begin_inset Quotes eld
+\end_inset
+
+effective exposure
+\begin_inset Quotes erd
+\end_inset
+
+, i.e., not the actual 100 treatments of my friends, but rather what is the
+ exposure that is EFFECTING ME
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series medium
+Assume that my outcome (
+\begin_inset Formula $Y_{i})$
+\end_inset
+
+ depends only on some functions (
+\series bold
+\emph on
+network summaries
+\series medium
+\emph default
+): 
+\begin_inset Formula 
+\[
+W_{i}^{s}:=w_{i}^{s}(\mathbf{W}_{F_{i}},W_{i})\mbox{ and }A_{i}^{s}:=a_{i}^{s}(\mathbf{A}_{F_{i}},A_{i})
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Itemize
+
+\series medium
+They have the same and 
+\series bold
+fixed
+\series medium
+ dimension for all 
+\series default
+
+\begin_inset Formula $i$
+\end_inset
+
+ and are otherwise arbitrary
+\end_layout
+
+\begin_layout Itemize
+Assume:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Conditional probability 
+\begin_inset Formula $P(A_{i}\:|\:\cdot)$
+\end_inset
+
+ is only a function of summary
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\begin_inset Formula $w_{i}^{s}(\mathbf{W}_{F_{i}},W_{i})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\series medium
+Conditional density 
+\series default
+
+\begin_inset Formula $P(Y_{i}\:|\:\cdot)$
+\end_inset
+
+ is only a function of
+\series bold
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $w_{i}^{s}(\mathbf{W}_{F_{i}}W_{i})$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{i}^{s}(\mathbf{A}_{F_{i}},A_{i})$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Simplifies the notation:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Data on 
+\begin_inset Formula $N$
+\end_inset
+
+ units can be represented: 
+\begin_inset Formula 
+\[
+O_{i}^{s}=(W_{i}^{s},A_{i}^{s},Y_{i}),\ \mbox{for }i=1,\ldots,N
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Our estimand (ATE):
+\begin_inset Formula 
+\[
+\dfrac{1}{N}\sum_{i=1}^{N}\left[E(Y_{i}|A_{i}^{s}=a_{i}^{s}(\mathbf{o}),W_{i}^{s})-E(Y_{i}|A_{i}^{s}=a_{i}^{s}(\mathbf{1}),W_{i}^{s})\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Section
+Estimation with 
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ / Simulations with 
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Syntax for network summaries in 
+\begin_inset Formula $\mathbf{R}$
+\end_inset
+
+ (
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ and 
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+) 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define network baseline summaries / features 
+\begin_inset Formula $W^{s}$
+\end_inset
+
+ with function 
+\begin_inset Formula $\mathbf{def\_sW}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+def_sW(netW1W2 = sum(W1[[1:Kmax]]*W2[[1:Kmax]]))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define network exposure summaries / features 
+\begin_inset Formula $A^{s}$
+\end_inset
+
+ with function 
+\begin_inset Formula $\mathbf{def\_sA}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+def_sA(A, sum.net.A = (sum(A[[1:Kmax]])))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Implements 3 estimators for network data
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+IPW
+\series default
+: Inverse Probability Weighted Estimator
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Re-weights the outcomes 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+ by the inverse probability of receiving the network exposure summary (the
+ effective exposure)
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+GCOMP
+\series default
+: G-Computation Estimator
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+good time to talk about non-root-n convergance of ML density estimator,
+ hence motivation for TMLE
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Directly fit the outcome model: 
+\begin_inset Formula $(E(Y_{i}|A_{i}^{s},W_{i}^{s})$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+
+\series bold
+TMLE
+\series default
+: Targeted Maximum Likelihood Estimator
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+outside the scope of this talk
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Combines IPW and GCOMP into a single estimator to take advantage of both
+\end_layout
+
+\begin_layout Itemize
+Involves only a single additional modeling step (at low computational cost)
+\end_layout
+
+\begin_layout Itemize
+Recovers the CLT for the estimator (allows ML)
+\end_layout
+
+\begin_layout Itemize
+Provides asymptotically valid confidence intervals
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ will work with independent data just as well (no network)
+\end_layout
+
+\begin_layout Itemize
+For network data, 
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ implements two approaches for estimating variance that adjusts for dependence
+\begin_inset Note Note
+status open
+
+\begin_layout Itemize
+Efficient influence curve for dependent data
+\end_layout
+
+\begin_layout Itemize
+Parametric bootstrap that takes into account dependence relationships among
+ network summaries
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Defining 
+\begin_inset Quotes eld
+\end_inset
+
+effective
+\begin_inset Quotes erd
+\end_inset
+
+ exposure 
+\begin_inset Formula $A_{i}^{s}$
+\end_inset
+
+ created another problem:
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Continuous exposures also occur in usual independent data settings (environmenta
+l epi)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Even when 
+\begin_inset Formula $A_{i}\in\{0,1\}$
+\end_inset
+
+, the summary 
+\begin_inset Formula $A_{i}^{s}$
+\end_inset
+
+ is likely to be continuous
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+The 
+\begin_inset Quotes eld
+\end_inset
+
+effective
+\begin_inset Quotes erd
+\end_inset
+
+ exposure model is now a 
+\series bold
+multivariate conditional
+\series default
+ density rather than a binary classification problem: 
+\begin_inset Formula $p_{A_{i}^{s}|W_{i}^{s}}(a^{s}|w^{s})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ implements conditional histogram density estimator for 
+\begin_inset Formula $p_{A_{i}^{s}|W_{i}^{s}}$
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Discretize range of 
+\begin_inset Formula $A_{i}^{s}$
+\end_inset
+
+ by splitting it into intervals (bins)
+\end_layout
+
+\begin_layout Itemize
+Fit a separate binary classification/regression for each bin as a function
+ of the baseline summaries 
+\begin_inset Formula $W_{i}^{s}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Automatically detects the type of the exposure summary and then decides
+ how to fit it
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+ allows for stochastic interventions, among others:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+
+\series bold
+Stochastic Intervention
+\series default
+: covered a random 40% of the community?
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Targeted Intervention
+\series default
+: covered only the top 10% most connected community members?
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Network intervention
+\series default
+: remove or add a new friend?
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Network simulation with 
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+ - example 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+Network SEM
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+\begin_inset Formula $\mathtt{simcausal}$
+\end_inset
+
+: 
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Simulates synthetic datasets to test statistical methods applied in causal
+ inference
+\end_layout
+
+\begin_layout Itemize
+Time-varying (longitudinal data) and network-dependent data
+\end_layout
+
+\begin_layout Itemize
+Single pipeline for conducting a 
+\begin_inset Quotes eld
+\end_inset
+
+typical
+\begin_inset Quotes erd
+\end_inset
+
+ simulation study in causal inference
+\end_layout
+
+\begin_layout Itemize
+Supports arbitrary univariate and multivariate (conditional) distributions
+\end_layout
+
+\end_deeper
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE, message = FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ node("Y", distr = "rbern", prob = plogis(0.5*W - 0.35*A - 0.5*sum(A[[1:Kmax]])))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Above defined 
+\begin_inset Formula $P(Y_{i}=1|\cdot)$
+\end_inset
+
+ as logit-linear function of:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Baseline covariate (
+\begin_inset Formula $\mathbf{W}$
+\end_inset
+
+), exposure (
+\begin_inset Formula $\mathbf{A}$
+\end_inset
+
+), and
+\end_layout
+
+\begin_layout Itemize
+Sum of friends' exposures (
+\begin_inset Formula $\mbox{\textbf{sum(A[[1:Kmax]])}})$
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+Note: 
+\begin_inset Formula $\mathbf{Kmax}$
+\end_inset
+
+ is a special constant - maximum number of friends and is evaluated automaticall
+y by 
+\begin_inset Formula $\mbox{simcausal}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Estimation with 
+\begin_inset Formula $tmlenet$
+\end_inset
+
+ - example 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define baseline summaries / features 
+\begin_inset Formula $W^{s}$
+\end_inset
+
+ with function 
+\begin_inset Formula $\mathbf{def\_sW}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+sW <-  def_sW(W1, W2) +
+\end_layout
+
+\begin_layout Plain Layout
+
+       def_sW(netW1W2 = sum(W1[[1:Kmax]]*W2[[1:Kmax]]),
+\end_layout
+
+\begin_layout Plain Layout
+
+              nF.PA = sum(PA[[1:Kmax]]),
+\end_layout
+
+\begin_layout Plain Layout
+
+              nFPAeq0.PAeq1 = (nF.PA < 1) * (PA == 1),
+\end_layout
+
+\begin_layout Plain Layout
+
+              replaceNAw0 = TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define exposure summaries / features 
+\begin_inset Formula $A^{s}$
+\end_inset
+
+ with function 
+\begin_inset Formula $\mathbf{def\_sA}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+sA <- def_sA(A, A.PAeq0 = A * (PA == 0)) +
+\end_layout
+
+\begin_layout Plain Layout
+
+     def_sA(sum.net.A = (sum(A[[1:Kmax]])*(HUB==0) +
+\end_layout
+
+\begin_layout Plain Layout
+
+			sum((W1[[1:Kmax]] > 4)*A[[1:Kmax]])*(HUB==1)),
+\end_layout
+
+\begin_layout Plain Layout
+
+              	replaceNAw0 = TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Estimation with 
+\begin_inset Formula $tmlenet$
+\end_inset
+
+ - example 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Define interventions with function 
+\begin_inset Formula $\mathbf{def\_new\_sA}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE, message=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+intervene_1 <-  def_new_sA(A = 0)
+\end_layout
+
+\begin_layout Plain Layout
+
+intervene_2 <-  def_new_sA(A = 1 - A)
+\end_layout
+
+\begin_layout Plain Layout
+
+intervene_stoch <-  def_new_sA(A = rbinom(n = length(A), size = 1, prob
+ = 0.35))
+\end_layout
+
+\begin_layout Plain Layout
+
+intervene_dyn <-  def_new_sA(A = rbinom(n = length(A), size = 1, 
+\end_layout
+
+\begin_layout Plain Layout
+
+					prob = ifelse(nF >= 20, 0.9, 0.1)))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Estimation with 
+\begin_inset Formula $tmlenet$
+\end_inset
+
+ - example 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+\begin_inset Formula $\mathtt{tmlenet}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Function 
+\begin_inset Formula $\mathbf{tmlenet}$
+\end_inset
+
+ performs estimation (also requires the network matrix and the input data):
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval = FALSE, message=FALSE, results = 'hide'>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# REGRESSION FORMULAS
+\end_layout
+
+\begin_layout Plain Layout
+
+Qform <- "Y ~ nF.PA + A.PAeq0 + nFPAeq0.PAeq1 + sum.net.A + PA + W1 + W2" 
+\end_layout
+
+\begin_layout Plain Layout
+
+hform.g0 <- "A + sum.net.A ~ HUB + PA + nF.PA + nFPAeq0.PAeq1" 
+\end_layout
+
+\begin_layout Plain Layout
+
+# EFFECT ESTIMATION
+\end_layout
+
+\begin_layout Plain Layout
+
+res <- tmlenet(data = sim_dat, sW = sW, sA = sA,
+\end_layout
+
+\begin_layout Plain Layout
+
+              NETIDmat = NetInd_mat,
+\end_layout
+
+\begin_layout Plain Layout
+
+              Kmax = ncol(NetInd_mat),
+\end_layout
+
+\begin_layout Plain Layout
+
+              intervene1.sA = intervene_stoch,
+\end_layout
+
+\begin_layout Plain Layout
+
+              Qform = Qform,
+\end_layout
+
+\begin_layout Plain Layout
+
+              hform.g0 = hform.g0,
+\end_layout
+
+\begin_layout Plain Layout
+
+              hform.gstar = hform.g0,
+\end_layout
+
+\begin_layout Plain Layout
+
+              optPars = list(
+\end_layout
+
+\begin_layout Plain Layout
+
+                bootstrap.var = FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+              )
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Section
+Simulation Study
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Simulation - Peer Effects of Exercise
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Simulated a small world network
+\end_layout
+
+\begin_layout Itemize
+Study designed to increase the levels of physical activity in a highly-connected
+ community
+\end_layout
+
+\begin_layout Itemize
+Individuals randomly received vouchers  to attend a local gym
+\end_layout
+
+\begin_layout Itemize
+Outcome is a binary indicator of maintaining gym membership
+\end_layout
+
+\begin_layout Itemize
+Estimated the effects of:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Assigning exposure to random 35%
+\end_layout
+
+\begin_layout Itemize
+Targeted exposure assignment to top 10% most connected units
+\end_layout
+
+\begin_layout Itemize
+Effect of combining the exposure with network interventions (additional
+ physically active friend for each units with <10 friends)
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Frame
+\begin_inset Argument 4
+status open
+
+\begin_layout Plain Layout
+Simulation Results - Small World Network
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_deeper
+\begin_layout Standard
+\begin_inset Graphics
+	filename figure/knitR-CIres_EY_smwld-1.pdf
+	scale 69
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+Concluding remarks
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout FrameTitle
+Concluding remarks
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\begin_inset Formula $\mathbf{tmlenet}$
+\end_inset
+
+
+\series default
+ solves some estimation challenges in network-dependent data
+\end_layout
+
+\begin_layout Itemize
+Allows continuous exposures & arbitrary stochastic interventions
+\end_layout
+
+\begin_layout Itemize
+Flexible interface for defining arbitrary summaries/features of network
+ covariates
+\end_layout
+
+\begin_layout Itemize
+Two ways of doing inference while adjusting for dependence
+\end_layout
+
+\begin_layout Itemize
+Ongoing work, new features are being added (e.g., networks over multiple time-poin
+ts)
+\end_layout
+
+\begin_layout Itemize
+See 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\mathbf{simcausal}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ vignette on CRAN and JSS paper to appear 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://cran.r-project.org/web/packages/simcausal
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+Github:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+\begin_inset Formula $\mathbf{simcausal}$
+\end_inset
+
+: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/osofr/simcausal
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\begin_inset Formula $\mathbf{tmlenet}$
+\end_inset
+
+:
+\series default
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/osofr/tmlenet
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+\begin_inset Formula $\mathbf{stremr}$
+\end_inset
+
+ 
+\series default
+(most recent expansion of 
+\begin_inset Formula $\mathbf{tmlenet}$
+\end_inset
+
+ code into longitudinal IID data, estimation with h2o ML libraries): 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/osofr/stremr
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_deeper
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex FragileFrame
+status open
+
+\begin_layout FrameTitle
+
+\series bold
+REFERENCES
+\series default
+ 
+\begin_inset Flex FragileTitle
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+REFERENCES
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\size small
+Sofrygin, O and van der Laan, M J, "Semi-Parametric Estimation and Inference
+ for the Mean Outcome of the Single Time-Point Intervention in a Causally
+ Connected Population" (December 2015).
+ 
+\begin_inset Flex Emphasize
+status open
+
+\begin_layout Plain Layout
+U.C.
+ Berkeley Division of Biostatistics Working Paper Series.
+\end_layout
+
+\end_inset
+
+ Working Paper 344.
+\end_layout
+
+\begin_layout Enumerate
+
+\size small
+Sofrygin, O.
+ and van der Laan, M.
+ J.
+ (2015).
+ simcausal R Package: Conducting Transparent and Reproducible Simulation
+ Studies of Causal Effect Estimation with Complex Longitudinal Data.
+ 
+\begin_inset Flex Emphasize
+status open
+
+\begin_layout Plain Layout
+
+\size small
+Submitted to J of Stat Soft.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+
+\size small
+Sofrygin, O.
+ and van der Laan, M.
+ J.
+ (2015).
+ tmlenet: Targeted Maximum Likelihood Estimation for Network Data.
+ R package version 0.1.0.
+\end_layout
+
+\begin_layout Enumerate
+
+\size small
+van der Laan, M.
+ J.
+ (2014).
+ Causal Inference for a Population of Causally Connected Units.
+ 
+\begin_inset Flex Emphasize
+status open
+
+\begin_layout Plain Layout
+Journal of Causal Inference
+\end_layout
+
+\end_inset
+
+, 2(1):1–62.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+FUNDING ACKNOWLEDGEMENT
+\series default
+:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+This work was partially supported through an NIH grant (R01 AI074345-07)
+ and a Patient-Centered Outcomes Research Institute (PCORI) Award (ME-1403-12506
+).
+\end_layout
+
+\end_deeper
+\end_inset
+
+
+\end_layout
+
+\begin_layout Separator
+
+\end_layout
+
+\end_body
+\end_document
